@@ -1,0 +1,257 @@
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #2ea2c3;
+    --background-color: #f8f9fa;
+    --card-background: #ffffff;
+    --text-color: #333333;
+    --sidebar-width: 250px;
+    --header-height: 60px;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--card-background);
+    color: var(--text-color);
+    padding: 20px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-size: 24px;
+}
+
+.nav-item {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: var(--border-radius);
+    margin-bottom: 10px;
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Use inherited color from parent */
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background-color: rgba(74, 144, 226, 0.1);
+    color: var(--primary-color);
+}
+
+
+.nav-item i {
+    font-size: 18px;
+}
+
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 30px;
+    flex: 1;
+}
+
+h1, h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.user-stats {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 14px;
+}
+
+.exchange-container {
+    display: grid;
+    gap: 30px;
+    grid-template-columns: 2fr 1fr;
+}
+
+.offers-list, .create-offer {
+    background: var(--card-background);
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-input, .btn, select, input[type="number"] {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.btn {
+    cursor: pointer;
+    font-weight: 500;
+    color: white;
+    transition: var(--transition);
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #3a7bc8;
+}
+
+.btn-success {
+    background-color: var(--secondary-color);
+}
+
+.btn-success:hover {
+    background-color: #45b76c;
+}
+
+.offer-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+.offer-card:hover {
+    box-shadow: var(--box-shadow);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--card-background);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    max-width: 500px;
+    width: 90%;
+}
+
+.close-modal {
+    float: right;
+    cursor: pointer;
+    font-size: 24px;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+        padding: 20px 10px;
+    }
+
+    .sidebar h2, .nav-item span {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 60px;
+    }
+
+    .exchange-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 16px;
+    transition: var(--transition);
+}
+
+.btn-icon:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.1);
+}
+

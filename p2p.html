@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Forex Exchange</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Forex AI</h2>
+        <div class="nav-item"><i class="fas fa-chart-line"></i><span>Dashboard</span></div>
+        <div class="nav-item"><i class="fas fa-exchange-alt"></i><span>Currency Exchange</span></div>
+        <div class="nav-item active"><i class="fas fa-users"></i><span>P2P Exchange</span></div>
+        <div class="nav-item"><i class="fas fa-wallet"></i><span>E-Money Conversion</span></div>
+        <div class="nav-item"><i class="fas fa-fingerprint"></i><span>Biometric Verification</span></div>
+        <div class="nav-item"><i class="fas fa-history"></i><span>Transaction History</span></div>
+        <div class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></div>
+    </div>
+
+    <div class="main-content">
+        <h1>P2P Currency Exchange</h1>
+        <div class="user-stats">
+            <div class="stat-card">
+                <div class="stat-value">45</div>
+                <div class="stat-label">Active Offers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4.8/5</div>
+                <div class="stat-label">User Rating</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">₹5.2L</div>
+                <div class="stat-label">Total Exchanged</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">98%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+        </div>
+
+        <div class="exchange-container">
+            <div class="offers-list">
+                <h2>Available Exchange Offers</h2>
+                <div class="filters">
+                    <select id="currencyFilter" aria-label="Filter by currency">
+                        <option value="">All Currencies</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                    </select>
+                    <input type="number" placeholder="Min Amount" id="minAmount" aria-label="Minimum amount">
+                    <input type="number" placeholder="Max Amount" id="maxAmount" aria-label="Maximum amount">
+                    <button class="btn btn-primary" onclick="filterOffers()">Filter</button>
+                </div>
+                <div id="offersContainer"></div>
+            </div>
+
+            <div class="create-offer">
+                <h2>Create New Offer</h2>
+                <form id="newOfferForm">
+                    <div class="form-group">
+                        <label for="offerType">I Want to:</label>
+                        <select id="offerType" required>
+                            <option value="buy">Buy</option>
+                            <option value="sell">Sell</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="offerCurrency">Currency:</label>
+                        <select id="offerCurrency" required>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="offerAmount">Amount:</label>
+                        <input type="number" id="offerAmount" required placeholder="Enter amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="offerRate">Exchange Rate:</label>
+                        <input type="number" id="offerRate" required placeholder="Enter rate">
+                    </div>
+                    <div class="form-group">
+                        <label for="offerPaymentMethod">Payment Method:</label>
+                        <select id="offerPaymentMethod" required>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="upi">UPI</option>
+                            <option value="cash">Cash</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Offer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()" aria-label="Close modal">&times;</span>
+            <h2>Complete Transaction</h2>
+            <div id="transactionDetails"></div>
+            <button class="btn btn-success" onclick="confirmTransaction()">Confirm Transaction</button>
+        </div>
+    </div>
+
+    <!-- Link to separated JavaScript files -->
+    <script src="scripts/offers.js"></script>
+    <script src="scripts/modal.js"></script>
+    <script src="scripts/form.js"></script>
+</body>
+</html>

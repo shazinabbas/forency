@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forency</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the external CSS file -->
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            overflow: hidden; /* Prevent scrollbars from appearing */
+        }
+
+        #backgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1; /* Behind other content */
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            position: relative; /* Position relative for z-index control */
+            z-index: 1; /* Ensure it is above the canvas */
+            color: #fff; /* Set a color for the text */
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #4a90e2; /* Heading color */
+        }
+
+        .hero button {
+            background-color: #4a90e2;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            border-color: #4a75e2;
+            border-style: double;
+        }
+
+        .hero button:hover {
+            background-color: #4a91e299;
+            transform: scale(1.1);
+        }
+
+        /* Hide the sidebar on the landing page */
+        body.landing-page .sidebar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="landing-page"> <!-- Add class to indicate landing page -->
+    <canvas id="backgroundCanvas"></canvas> <!-- Canvas for stars -->
+
+    <div class="sidebar">
+        <h2>Forency</h2>
+        <div class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Exchange</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="hero" id="welcomePage">
+            <h1>Welcome to Forency.io</h1>
+            <button class="btn btn-primary" onclick="navigateToDashboard()">Start Your Journey</button>
+        </div>
+
+        <div class="user-stats">
+            <div class="stat-card">
+                <div class="stat-value">1,234</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">567</div>
+                <div class="stat-label">Active Offers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">890</div>
+                <div class="stat-label">Completed Trades</div>
+            </div>
+        </div>
+
+        <div class="exchange-container">
+            <div class="offers-list">
+                <h2>Available Offers</h2>
+                <div class="offer-card">
+                    <div>Offer 1</div>
+                    <div>$100</div>
+                </div>
+                <div class="offer-card">
+                    <div>Offer 2</div>
+                    <div>$200</div>
+                </div>
+            </div>
+            <div class="create-offer">
+                <h2>Create Offer</h2>
+                <div class="form-group">
+                    <label for="offerAmount">Amount</label>
+                    <input type="number" id="offerAmount" class="filter-input" placeholder="Enter amount">
+                </div>
+                <button class="btn btn-success">Submit Offer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+        const numStars = 900;
+
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 0.5
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < numStars; i++) {
+                const star = stars[i];
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#4a90e2'; // Color of the stars
+                ctx.fill();
+                star.x -= star.speed;
+                if (star.x < 0) {
+                    star.x = canvas.width;
+                }
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function navigateToDashboard() {
+            window.location.href = "dashboard.html";
+        }
+    </script>
+</body>
+
+</html>

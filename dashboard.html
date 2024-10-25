@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/exchange.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    
+    
+    <script src="scripts/sidebar.js" defer></script>
+
+    <div class="main-content">
+        <h1>Welcome to the Forex Dashboard</h1>
+
+        <!-- Currency Exchange Card -->
+        <div class="container">
+            <div class="form-section">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('buy')">Buy Currency</button>
+                    <button class="tab" onclick="switchTab('sell')">Sell Currency</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Currency</label>
+                    <select id="currency" onchange="updateRate()">
+                        <option>USD - US Dollar</option>
+                        <option>EUR - Euro</option>
+                        <option>GBP - British Pound</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="amount" value="1000" onchange="updateRate()">
+                </div>
+
+                <div class="result">
+                    <span id="result">84,690 INR approx</span>
+                    <button class="btn btn-primary">Get Rates</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/sidebar.js" defer></script>
+    <script>
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function updateRate() {
+            const amount = document.getElementById('amount').value;
+            const currency = document.getElementById('currency').value;
+            const rates = {
+                'USD - US Dollar': 84.69,
+                'EUR - Euro': 91.25,
+                'GBP - British Pound': 106.80
+            };
+            
+            const rate = rates[currency];
+            const result = (amount * rate).toLocaleString('en-IN', {
+                maximumFractionDigits: 0
+            });
+            
+            document.getElementById('result').textContent = `${result} INR approx`;
+        }
+    </script>
+</body>
+</html>
