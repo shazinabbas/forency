@@ -16,11 +16,11 @@ function setActiveLink() {
     const navItems = {
         "dashboard.html": "nav-dashboard",
         "currencyExchange.html": "nav-currency-exchange",
-        "p2p.html": "nav-p2p-exchange", // Change made here
-        "e-money-conversion.html": "nav-e-money-conversion",
-        "biometric-verification.html": "nav-biometric-verification",
+        "p2p.html": "nav-p2p-exchange", 
+        "triangle.html": "nav-triangle-exchange",
         "transaction-history.html": "nav-transaction-history",
         "settings.html": "nav-settings"
+
     };
 
     console.log("Current page:", currentPage); // Debugging line

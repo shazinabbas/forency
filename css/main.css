@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #2ea2c3;
+    --primary-color: #1d4ed8;
+    --secondary-color: #1d4fd8b6;
     --background-color: #f8f9fa;
     --card-background: #ffffff;
     --text-color: #333333;
@@ -154,7 +154,7 @@ h1, h2 {
 }
 
 .btn-primary:hover {
-    background-color: #3a7bc8;
+    background-color: #1d4ed8;
 }
 
 .btn-success {

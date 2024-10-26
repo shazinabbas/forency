@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forex Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f1f5f9;
+            --card: #ffffff;
+            --text: #1f2937;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .ticker-section {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .ticker-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: slide-in 0.5s ease-out;
+        }
+
+        .ticker-pair {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticker-value {
+            color: var(--primary);
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .providers-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .provider-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .provider-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .suggestion-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 2rem;
+        }
+
+        .suggestion-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .suggestion-icon {
+            background: #dbeafe;
+            color: var(--primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .suggestion-content {
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        .profit-highlight {
+            background: #ecfdf5;
+            color: var(--success);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            margin: 1rem 0;
+            display: inline-block;
+        }
+
+        .action-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="dashboard-header">
+        <h1>Forex Exchange Dashboard</h1>
+    </div>
+
+    <!-- Ticker Section -->
+    <div class="ticker-section">
+        <div class="ticker-card">
+            <div class="ticker-pair">USD/INR</div>
+            <div class="ticker-value">84.69 <i class="fas fa-arrow-up trend-up"></i></div>
+        </div>
+        <div class="ticker-card">
+            <div class="ticker-pair">EUR/INR</div>
+            <div class="ticker-value">91.25 <i class="fas fa-arrow-down trend-down"></i></div>
+        </div>
+        <div class="ticker-card">
+            <div class="ticker-pair">GBP/INR</div>
+            <div class="ticker-value">106.80 <i class="fas fa-arrow-up trend-up"></i></div>
+        </div>
+        <div class="ticker-card">
+            <div class="ticker-pair">EUR/USD</div>
+            <div class="ticker-value">1.0778 <i class="fas fa-arrow-up trend-up"></i></div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Providers Section -->
+        <div class="providers-section">
+            <div class="provider-card">
+                <div class="provider-header">
+                    <div class="provider-logo">
+                        <i class="fas fa-building-columns"></i>
+                    </div>
+                    <div class="provider-name">Western Union</div>
+                </div>
+                <div class="provider-details">
+                    <div class="provider-rate">1 USD = 84.75 INR</div>
+                    <div>Transfer Fee: ₹250</div>
+                    <div>Delivery: 10-15 minutes</div>
+                    <div>Rating: ⭐⭐⭐⭐½ (4.5)</div>
+                </div>
+            </div>
+
+            <div class="provider-card">
+                <div class="provider-header">
+                    <div class="provider-logo">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="provider-name">Wise</div>
+                </div>
+                <div class="provider-details">
+                    <div class="provider-rate">1 USD = 84.62 INR</div>
+                    <div>Transfer Fee: ₹150</div>
+                    <div>Delivery: 1-2 business days</div>
+                    <div>Rating: ⭐⭐⭐⭐⭐ (4.8)</div>
+                </div>
+            </div>
+
+            <div class="provider-card">
+                <div class="provider-header">
+                    <div class="provider-logo">
+                        <i class="fas fa-money-bill-transfer"></i>
+                    </div>
+                    <div class="provider-name">Xoom</div>
+                </div>
+                <div class="provider-details">
+                    <div class="provider-rate">1 USD = 84.55 INR</div>
+                    <div>Transfer Fee: ₹200</div>
+                    <div>Delivery: 1-2 hours</div>
+                    <div>Rating: ⭐⭐⭐⭐ (4.2)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggestion Card -->
+        <div class="suggestion-card">
+            <div class="suggestion-header">
+                <div class="suggestion-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Smart Exchange Suggestion</h3>
+            </div>
+            <div class="suggestion-content">
+                <p>Based on current market rates, you could save money using triangular arbitrage:</p>
+                <div class="profit-highlight">
+                    Potential savings: 2.3% on your exchange
+                </div>
+                <p>Convert your currency through multiple pairs to get better rates than direct conversion.</p>
+            </div>
+            <button class="action-button" onclick="window.location.href='/triangular'">
+                Try Triangular Exchange
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</body>
+</html>
