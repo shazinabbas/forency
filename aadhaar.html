@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYC Verification Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .kyc-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .kyc-header h1 {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .kyc-header p {
+            color: var(--secondary);
+        }
+
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .progress-tracker::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            background: var(--card);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid var(--border);
+        }
+
+        .progress-step.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .progress-step.completed {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .progress-label {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 0.5rem;
+            white-space: nowrap;
+            font-size: 0.875rem;
+        }
+
+        .kyc-form {
+            background: var(--card);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .document-upload {
+            border: 2px dashed var(--border);
+            padding: 2rem;
+            text-align: center;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .document-upload:hover {
+            border-color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .document-upload i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .verification-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .verification-method {
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .verification-method:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .verification-method i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .biometric-section {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .video-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            background: #000;
+            margin: 1rem auto;
+            border-radius: 0.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="kyc-header">
+            <h1>KYC Verification</h1>
+            <p>Complete your verification to start trading</p>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div class="progress-tracker">
+            <div class="progress-step completed">
+                1
+                <span class="progress-label">Basic Info</span>
+            </div>
+            <div class="progress-step active">
+                2
+                <span class="progress-label">ID Verification</span>
+            </div>
+            <div class="progress-step">
+                3
+                <span class="progress-label">Biometric</span>
+            </div>
+            <div class="progress-step">
+                4
+                <span class="progress-label">Review</span>
+            </div>
+        </div>
+
+        <!-- KYC Form -->
+        <div class="kyc-form">
+            <!-- Basic Information Section -->
+            <div class="form-section" id="basic-info">
+                <h2>Basic Information</h2>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="As per Aadhaar">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date">
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select>
+                        <option>Select Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" placeholder="Linked with Aadhaar">
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="nextSection('id-verification')">Continue</button>
+                </div>
+            </div>
+
+            <!-- ID Verification Section -->
+            <div class="form-section active" id="id-verification">
+                <h2>ID Verification</h2>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Please ensure your Aadhaar is linked with your mobile number for OTP verification
+                </div>
+
+                <div class="verification-methods">
+                    <div class="verification-method" onclick="initiateAadhaarVerification()">
+                        <i class="fas fa-id-card"></i>
+                        <h3>Aadhaar Verification</h3>
+                        <p>Verify using Aadhaar number & OTP</p>
+                    </div>
+                    <div class="verification-method" onclick="initiateEVerification()">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>e-Verification</h3>
+                        <p>Verify using DigiLocker</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Aadhaar Number</label>
+                    <input type="text" placeholder="XXXX XXXX XXXX" maxlength="12">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-outline" onclick="previousSection()">Back</button>
+                    <button class="btn btn-primary" onclick="nextSection('biometric')">Continue</button>
+                </div>
+            </div>
+
+            <!-- Biometric Verification Section -->
+            <div class="form-section" id="biometric">
+                <h2>Biometric Verification</h2>
+                <div class="biometric-section">
+                    <div class="video-preview"></div>
+                    <p>Please position your face within the frame</p>
+                    <button class="btn btn-primary" onclick="startLivenessCheck()">
+                        <i class="fas fa-camera"></i> Start Verification
+                    </button>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-outline" onclick="previousSection()">Back</button>
+                    <button class="btn btn-primary" onclick="nextSection('review')">Continue</button>
+                </div>
+            </div>
+
+            <!-- Review Section -->
+            <div class="form-section" id="review">
+                <h2>Review & Submit</h2>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    All verifications completed successfully
+                </div>
+
+                <div class="verification-summary">
+                    <h3>Verification Summary</h3>
+                    <ul>
+                        <li>Basic Information ✓</li>
+                        <li>Aadhaar Verification ✓</li>
+                        <li>Biometric Verification ✓</li>
+                    </ul>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-outline" onclick="previousSection()">Back</button>
+                    <button class="btn btn-primary" onclick="submitKYC()">Submit KYC</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div class="modal" id="verificationModal">
+        <div class="modal-content">
+            <h2>Verifying Aadhaar</h2>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Processing verification...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 'id-verification';
+
+        function nextSection(section) {
+            document.querySelector(`#${currentSection}`).classList.remove('active');
+            document.querySelector(`#${section}`).classList.add('active');
+            currentSection = section;
+            updateProgress();
+        }
+
+        function previousSection() {
+            const sections = ['basic-info', 'id-verification', 'biometric', 'review'];
+            const currentIndex = sections.indexOf(currentSection);
+            if (currentIndex > 0) {
+                nextSection(sections[currentIndex - 1]);
+            }
+        }
+
+        function updateProgress() {
+            const steps = document.querySelectorAll('.progress-step');
+            const sections = ['basic-info', 'id-verification', 'biometric', 'review'];
+            const currentIndex = sections.indexOf(currentSection);
+
+            steps.forEach((step, index) => {
+                if (index < currentIndex) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index === currentIndex) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('completed', 'active');
+                }
+            });
+        }
