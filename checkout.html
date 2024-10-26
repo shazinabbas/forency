@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Exchange Checkout</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .provider-option {
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .provider-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .provider-option.selected {
+            border-color: var(--primary);
+            background-color: #f0f7ff;
+        }
+
+        .provider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .provider-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .rate {
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .rating {
+            color: var(--warning);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: var(--border);
+            z-index: 0;
+        }
+
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            background-color: var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success);
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            font-size: 1.1rem;
+        }
+
+        .btn:hover {
+            background-color: #1d4ed8;            
+            transform: translateY(-1px);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .summary-total {
+            border-top: 2px solid var(--border);
+            padding-top: 1rem;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .p2p-section {
+            border-top: 1px solid var(--border);
+            margin-top: 1rem;
+            padding-top: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .verification-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Checkout Section -->
+        <div class="main-section">
+            <!-- Progress Steps -->
+            <div class="card">
+                <div class="steps">
+                    <div class="step completed">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Amount</div>
+                    </div>
+                    <div class="step completed">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Provider</div>
+                    </div>
+                    <div class="step active">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Payment</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Confirm</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exchange Providers -->
+            <div class="card">
+                <h2>Select Exchange Provider</h2>
+               
+                <!-- Traditional Providers -->
+                <div class="provider-option selected">
+                    <div class="provider-header">
+                        <h3>Western Union</h3>
+                        <span class="badge badge-success">Best Rate</span>
+                    </div>
+                    <div class="provider-details">
+                        <span class="rate">1 USD = 74.50 INR</span>
+                        <span class="delivery">10-15 minutes</span>
+                        <span class="rating">★★★★☆ 4.5</span>
+                    </div>
+                </div>
+
+                <div class="provider-option">
+                    <div class="provider-header">
+                        <h3>Wise (TransferWise)</h3>
+                        <span class="badge badge-warning">Popular</span>
+                    </div>
+                    <div class="provider-details">
+                        <span class="rate">1 USD = 74.35 INR</span>
+                        <span class="delivery">1-2 hours</span>
+                        <span class="rating">★★★★★ 4.8</span>
+                    </div>
+                </div>
+
+                <!-- P2P Section -->
+                <div class="p2p-section">
+                    <h3>Peer-to-Peer Exchanges</h3>
+                    <div class="provider-option">
+                        <div class="user-profile">
+                            <div class="user-avatar">JD</div>
+                            <div>
+                                <h4>John Doe</h4>
+                                <div class="verification-badges">
+                                    <span class="badge badge-success">Verified</span>
+                                    <span class="badge badge-success">100+ Trades</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="provider-details">
+                            <span class="rate">1 USD = 74.80 INR</span>
+                            <span class="delivery">Local Bank Transfer</span>
+                            <span class="rating">★★★★★ 5.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Details -->
+            <div class="card">
+                <h2>Payment Details</h2>
+                <div class="form-group">
+                    <label for="payment-method">Payment Method</label>
+                    <select id="payment-method">
+                        <option>Bank Transfer</option>
+                        <option>Debit Card</option>
+                        <option>Credit Card</option>
+                        <option>UPI</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name">Recipient Name</label>
+                    <input type="text" id="recipient-name" placeholder="Enter recipient's full name">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-account">Recipient Account Number</label>
+                    <input type="text" id="recipient-account" placeholder="Enter account number">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-bank">Recipient Bank</label>
+                    <input type="text" id="recipient-bank" placeholder="Enter bank name">
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="summary-section">
+            <div class="card">
+                <h2>Order Summary</h2>
+                <div class="summary-item">
+                    <span>You Send</span>
+                    <span>1,000.00 USD</span>
+                </div>
+                <div class="summary-item">
+                    <span>Exchange Rate</span>
+                    <span>1 USD = 74.50 INR</span>
+                </div>
+                <div class="summary-item">
+                    <span>Transfer Fee</span>
+                    <span>4.99 USD</span>
+                </div>
+                <div class="summary-item">
+                    <span>Processing Time</span>
+                    <span>10-15 minutes</span>
+                </div>
+                <div class="summary-item summary-total">
+                    <span>Recipient Gets</span>
+                    <span>74,500.00 INR</span>
+                </div>
+                <button class="btn">Proceed to Payment</button>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="card">
+                <h2>Secure Transaction</h2>
+                <ul style="list-style: none;">
+                    <li>✓ Bank-grade encryption</li>
+                    <li>✓ 24/7 fraud monitoring</li>
+                    <li>✓ Regulated by financial authorities</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add click handlers for provider selection
+        document.querySelectorAll('.provider-option').forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove selected class from all options
+                document.querySelectorAll('.provider-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // Add selected class to clicked option
+                option.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>

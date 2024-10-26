@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Currency Exchange</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .payment-method {
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .payment-method.selected {
+            border-color: var(--primary);
+            background-color: #f0f7ff;
+        }
+
+        .payment-method img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 0.5rem;
+        }
+        .provider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .provider-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .rate {
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .rating {
+            color: var(--warning);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: var(--border);
+            z-index: 0;
+        }
+
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            background-color: var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success);
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            font-size: 1.1rem;
+        }
+
+        .btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .summary-total {
+            border-top: 2px solid var(--border);
+            padding-top: 1rem;
+            margin-top: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .security-badge {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .security-badge i {
+            font-size: 2rem;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+
+        .upi-section, .card-section, .bank-section {
+            display: none;
+        }
+
+        .upi-section.active, .card-section.active, .bank-section.active {
+            display: block;
+        }
+
+        .qr-code {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .qr-code img {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 1rem;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .bank-details {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .bank-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .copy-button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .copy-button:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+
+        .alert-info {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .success-toast {
+            border-left: 4px solid var(--success);
+        }
+
+        .error-toast {
+            border-left: 4px solid var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Payment Section -->
+        <div class="main-section">
+            <div class="card">
+                <div class="steps">
+                    <div class="step completed">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Amount</div>
+                    </div>
+                    <div class="step active">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Provider</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Payment</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Confirm</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Select Payment Method</h2>
+                <div class="payment-methods">
+                    <div class="payment-method" onclick="selectPaymentMethod('card')">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'%3E%3Cpath d='M22 4H2v16h20V4zm-2 14H4v-6h16v6zm0-10H4V6h16v2z'/%3E%3C/svg%3E" alt="Card">
+                        <div>Credit/Debit Card</div>
+                    </div>
+                    <div class="payment-method" onclick="selectPaymentMethod('upi')">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'/%3E%3C/svg%3E" alt="UPI">
+                        <div>UPI</div>
+                    </div>
+                    <div class="payment-method" onclick="selectPaymentMethod('bank')">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'%3E%3Cpath d='M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z'/%3E%3C/svg%3E" alt="Bank">
+                        <div>Bank Transfer</div>
+                    </div>
+                </div>
+
+                <!-- Card Payment Section -->
+                <div class="card-section">
+                    <div class="alert alert-info">
+                        🔒 Your card details are encrypted and secure
+                    </div>
+                    <div class="form-group">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry">Expiry Date</label>
+                            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="password" id="cvv" placeholder="123" maxlength="3">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-name">Name on Card</label>
+                        <input type="text" id="card-name" placeholder="John Doe">
+                    </div>
+                </div>
+
+                <!-- UPI Section -->
+                <div class="upi-section">
+                    <div class="qr-code">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none'%3E%3Crect width='200' height='200' fill='white'/%3E%3Cpath d='M40 40h120v120H40z' fill='%232563eb'/%3E%3C/svg%3E" alt="QR Code">
+                        <div>Scan QR code with any UPI app</div>
+                    </div>
+                    <div class="timer">Time remaining: 10:00</div>
+                    <div class="form-group">
+                        <label for="upi-id">Or enter UPI ID</label>
+                        <input type="text" id="upi-id" placeholder="username@upi">
+                    </div>
+                </div>
+
+                <!-- Bank Transfer Section -->
+                <div class="bank-section">
+                    <div class="alert alert-warning">
+                        ⚠️ Please make the transfer within 24 hours to secure your exchange rate
+                    </div>
+                    <div class="bank-details">
+                        <div class="bank-detail-item">
+                            <span>Account Number:</span>
+                            <div>
+                                <span>1234567890</span>
+                                <button class="copy-button">Copy</button>
+                            </div>
+                        </div>
+                        <div class="bank-detail-item">
+                            <span>IFSC Code:</span>
+                            <div>
+                                <span>ABCD0123456</span>
+                                <button class="copy-button">Copy</button>
+                            </div>
+                        </div>
+                        <div class="bank-detail-item">
+                            <span>Account Name:</span>
+                            <div>
+                                <span>Currency Exchange Ltd</span>
+                                <button class="copy-button">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="processPayment()">Pay Now</button>
+            </div>
+
+            <!-- Security Badges -->
+            <div class="security-badges">
+                <div class="security-badge">
+                    <i>🔒</i>
+                    <div>256-bit SSL Encryption</div>
+                </div>
+                <div class="security-badge">
+                    <i>✓</i>
+                    <div>PCI DSS Compliant</div>
+                </div>
+                <div class="security-badge">
+                    <i>🛡️</i>
+                    <div>Fraud Protection</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="summary-section">
+            <div class="card">
+                <h2>Order Summary</h2>
+                <div class="summary-item">
+                    <span>Exchange Amount</span>
+                    <span>1,000.00 USD</span>
+                </div>
+                <div class="summary-item">
+                    <span>Exchange Rate</span>
+                    <span>1 USD = 74.50 INR</span>
+                </div>
+                <div class="summary-item">
+                    <span>Service Fee</span>
+                    <span>4.99 USD</span>
+                </div>
+                <div class="summary-item">
+                    <span>Payment Method Fee</span>
+                    <span>2.00 USD</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total Amount</span>
+                    <span>1,006.99 USD</span>
+                </div>
+                <div class="summary-item">
+                    <span>Recipient Gets</span>
+                    <span>74,500.00 INR</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Processing Time</h2>
+                <div class="summary-item">
+                    <span>Card Payment</span>
+                    <span>Instant</span>
+                </div>
+                <div class="summary-item">
+                    <span>UPI</span>
+                    <span>10-15 minutes</span>
+                </div>
+                <div class="summary-item">
+                    <span>Bank Transfer</span>
+                    <span>1-2 business days</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedPaymentMethod = '';
+        let timer = null;
+        const PROCESSING_TIME = 2000; // 2 seconds for demo purposes
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePaymentMethods();
+            initializeFormValidation();
+            startUPITimer();
+        });
+
+        // Payment method selection
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+           
+            // Reset all payment methods and sections
+            document.querySelectorAll('.payment-method').forEach(pm => {
+                pm.classList.remove('selected');
+            });
+            document.querySelectorAll('.card-section, .upi-section, .bank-section').forEach(section => {
+                section.classList.remove('active');
+            });
+           
+            // Select the chosen method
+            const selectedElement = document.querySelector(`.payment-method[onclick*="${method}"]`);
+            if (selectedElement) {
+                selectedElement.classList.add('selected');
+            }
+           
+            // Show the corresponding section
+            const sectionElement = document.querySelector(`.${method}-section`);
+            if (sectionElement) {
+                sectionElement.classList.add('active');
+            }
+
+            // Update fees based on payment method
+            updatePaymentFees(method);
+        }
+
+        // Form validation
+        function initializeFormValidation() {
+            // Card number formatting
+            const cardNumber = document.getElementById('card-number');
+            if (cardNumber) {
+                cardNumber.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{4})/g, '$1 ').trim();
+                    e.target.value = value;
+                });
+            }
+
+            // Expiry date formatting
+            const expiry = document.getElementById('expiry');
+            if (expiry) {
+                expiry.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 2) {
+                        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                    }
+                    e.target.value = value;
+                });
+            }
+        }
+
+        // UPI Timer
+        function startUPITimer() {
+            let timeLeft = 600; // 10 minutes
+            const timerElement = document.querySelector('.timer');
+           
+            if (timer) clearInterval(timer);
+           
+            timer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+               
+                if (timerElement) {
+                    timerElement.textContent = `Time remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+               
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    showToast('UPI session expired. Please try again.', 'error');
+                } else {
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        // Update payment fees
+        function updatePaymentFees(method) {
+            const feeElement = document.querySelector('.summary-item:nth-child(3) span:last-child');
+            let fee = 4.99; // Base fee
+           
+            switch(method) {
+                case 'card':
+                    fee += 2.00;
+                    break;
+                case 'upi':
+                    fee += 0.50;
+                    break;
+                case 'bank':
+                    fee += 1.00;
+                    break;
+            }
+           
+            if (feeElement) {
+                feeElement.textContent = `${fee.toFixed(2)} USD`;
+            }
+           
+            updateTotal();
+        }
+
+        // Update total amount
+        function updateTotal() {
+            const baseAmount = 1000.00;
+            const fee = parseFloat(document.querySelector('.summary-item:nth-child(3) span:last-child').textContent);
+            const total = baseAmount + fee;
+           
+            const totalElement = document.querySelector('.summary-total span:last-child');
+            if (totalElement) {
+                totalElement.textContent = `${total.toFixed(2)} USD`;
+            }
+        }
+
+        // Copy bank details
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!', 'success');
+            }).catch(err => {
+                showToast('Failed to copy text', 'error');
+            });
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+           
+            toast.className = 'toast';
+            toast.classList.add(`${type}-toast`);
+            toastMessage.textContent = message;
+           
+            toast.style.display = 'block';
+           
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Process payment
+        function processPayment() {
+            if (!selectedPaymentMethod) {
+                showToast('Please select a payment method', 'error');
+                return;
+            }
+
+            // Show loading overlay
+            document.querySelector('.loading-overlay').style.display = 'flex';
+
+            // Simulate payment processing
+            setTimeout(() => {
+                document.querySelector('.loading-overlay').style.display = 'none';
+               
+                // Randomly succeed or fail for demo purposes
+                if (Math.random() > 0.3) {
+                    showToast('Payment successful!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/confirmation'; // Redirect to confirmation page
+                    }, 1500);
+                } else {
+                    showToast('Payment failed. Please try again.', 'error');
+                }
+            }, PROCESSING_TIME);
+        }
+
+        // Bank detail copy buttons
+        document.querySelectorAll('.copy-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const text = e.target.previousElementSibling.textContent;
+                copyToClipboard(text);
+            });
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        };
+
+        // Initialize copy buttons
+        document.querySelectorAll('.copy-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const textToCopy = this.previousElementSibling.textContent;
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => showToast('Copied to clipboard!', 'success'))
+                    .catch(() => showToast('Failed to copy', 'error'));
+            });
+        });
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = document.querySelectorAll('input[required]');
+           
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    field.classList.add('error');
+                    isValid = false;
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+
+            return isValid;
+        }
+
+        // Card number validation
+        function validateCardNumber(number) {
+            // Remove spaces and non-digit characters
+            number = number.replace(/\D/g, '');
+           
+            // Check length
+            if (number.length !== 16) return false;
+           
+            // Luhn algorithm
+            let sum = 0;
+            let isEven = false;
+           
+            for (let i = number.length - 1; i >= 0; i--) {
+                let digit = parseInt(number[i]);
+               
+                if (isEven) {
+                    digit *= 2;
+                    if (digit > 9) {
+                        digit -= 9;
+                    }
+                }
+               
+                sum += digit;
+                isEven = !isEven;
+            }
+           
+            return sum % 10 === 0;
+        }
+
+        // Initialize tooltips
+        function initializeTooltips() {
+            const tooltips = document.querySelectorAll('[data-tooltip]');
+           
+            tooltips.forEach(element => {
+                element.addEventListener('mouseover', e => {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip';
+                    tooltip.textContent = element.dataset.tooltip;
+                    document.body.appendChild(tooltip);
+                   
+                    const rect = element.getBoundingClientRect();
+                    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
+                    tooltip.style.left = `${rect.left + (element.offsetWidth - tooltip.offsetWidth) / 2}px`;
+                });
+               
+                element.addEventListener('mouseout', () => {
+                    const tooltip = document.querySelector('.tooltip');
+                    if (tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            });
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            selectPaymentMethod('card'); // Default to card payment
+            initializeTooltips();
+            initializeFormValidation();
+        };
+    </script>
+</body>
+</html>
+
+

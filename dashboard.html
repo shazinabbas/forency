@@ -5,26 +5,282 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f1f5f9;
+            --card: #ffffff;
+            --text: #1f2937;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: var(--background);
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--secondary);
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: var(--card);
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--background);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .result {
+            background: var(--background);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        #result {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* Exchange Provider Section */
+        .providers-section {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .provider-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .provider-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .provider-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .provider-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--background);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .provider-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .provider-details {
+            display: grid;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .provider-rate {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .live-rates {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            margin: 2rem 0;
+        }
+
+        .rate-card {
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .rate-pair {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .rate-value {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+    </style>
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/exchange.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    
-    
-    <script src="scripts/sidebar.js" defer></script>
+    <script src="scripts/sidebar.js" defer></script> <!-- Load sidebar script -->
 
     <div class="main-content">
         <h1>Welcome to the Forex Dashboard</h1>
 
-        <!-- Currency Exchange Card -->
+        <!-- Live Rates Ticker -->
+        <div class="live-rates">
+            <div class="rate-card">
+                <div class="rate-pair">USD/INR</div>
+                <div class="rate-value">84.69 <i class="fas fa-arrow-up trend-up"></i></div>
+            </div>
+            <div class="rate-card">
+                <div class="rate-pair">EUR/INR</div>
+                <div class="rate-value">91.25 <i class="fas fa-arrow-down trend-down"></i></div>
+            </div>
+            <div class="rate-card">
+                <div class="rate-pair">GBP/INR</div>
+                <div class="rate-value">106.80 <i class="fas fa-arrow-up trend-up"></i></div>
+            </div>
+        </div>
+
         <div class="container">
+            <!-- Exchange Form Section -->
             <div class="form-section">
                 <div class="tabs">
                     <button class="tab active" onclick="switchTab('buy')">Buy Currency</button>
                     <button class="tab" onclick="switchTab('sell')">Sell Currency</button>
                 </div>
-
                 <div class="form-group">
                     <label>Currency</label>
                     <select id="currency" onchange="updateRate()">
@@ -33,21 +289,66 @@
                         <option>GBP - British Pound</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>Amount</label>
                     <input type="number" id="amount" value="1000" onchange="updateRate()">
                 </div>
-
                 <div class="result">
                     <span id="result">84,690 INR approx</span>
-                    <button class="btn btn-primary">Get Rates</button>
+                    <button class="btn btn-primary">Get Best Rate <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exchange Providers Section -->
+        <div class="providers-section">
+            <div class="provider-card">
+                <div class="provider-header">
+                    <div class="provider-logo">
+                        <i class="fas fa-building-columns"></i>
+                    </div>
+                    <div class="provider-name">Western Union</div>
+                </div>
+                <div class="provider-details">
+                    <div class="provider-rate">1 USD = 84.75 INR</div>
+                    <div>Transfer Fee: ₹250</div>
+                    <div>Delivery: 10-15 minutes</div>
+                    <div>Rating: ⭐⭐⭐⭐½ (4.5)</div>
+                </div>
+            </div>
+
+            <div class="provider-card">
+                <div class="provider-header">
+                    <div class="provider-logo">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="provider-name">Wise</div>
+                </div>
+                <div class="provider-details">
+                    <div class="provider-rate">1 USD = 84.62 INR</div>
+                    <div>Transfer Fee: ₹150</div>
+                    <div>Delivery: 1-2 business days</div>
+                    <div>Rating: ⭐⭐⭐⭐⭐ (4.8)</div>
+                </div>
+            </div>
+
+            <div class="provider-card">
+                <div class="provider-header">
+                    <div class="provider-logo">
+                        <i class="fas fa-money-bill-transfer"></i>
+                    </div>
+                    <div class="provider-name">Xoom</div>
+                </div>
+                <div class="provider-details">
+                    <div class="provider-rate">1 USD = 84.55 INR</div>
+                    <div>Transfer Fee: ₹200</div>
+                    <div>Delivery: 1-2 hours</div>
+                    <div>Rating: ⭐⭐⭐⭐ (4.2)</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="scripts/sidebar.js" defer></script>
     <script>
         function switchTab(tab) {
             const tabs = document.querySelectorAll('.tab');
@@ -63,12 +364,10 @@
                 'EUR - Euro': 91.25,
                 'GBP - British Pound': 106.80
             };
-            
             const rate = rates[currency];
             const result = (amount * rate).toLocaleString('en-IN', {
                 maximumFractionDigits: 0
             });
-            
             document.getElementById('result').textContent = `${result} INR approx`;
         }
     </script>

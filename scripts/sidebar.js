@@ -1,5 +1,3 @@
-// sidebar.js
-
 // Function to load the sidebar dynamically
 async function loadSidebar() {
     try {
@@ -17,13 +15,15 @@ function setActiveLink() {
     const currentPage = window.location.pathname.split("/").pop();
     const navItems = {
         "dashboard.html": "nav-dashboard",
-        "currency-exchange.html": "nav-currency-exchange",
-        "p2p-exchange.html": "nav-p2p-exchange",
+        "currencyExchange.html": "nav-currency-exchange",
+        "p2p.html": "nav-p2p-exchange", // Change made here
         "e-money-conversion.html": "nav-e-money-conversion",
         "biometric-verification.html": "nav-biometric-verification",
         "transaction-history.html": "nav-transaction-history",
         "settings.html": "nav-settings"
     };
+
+    console.log("Current page:", currentPage); // Debugging line
 
     // Remove active class from all nav items
     for (const key in navItems) {
@@ -38,6 +38,7 @@ function setActiveLink() {
         const activeNavItem = document.getElementById(navItems[currentPage]);
         if (activeNavItem) {
             activeNavItem.classList.add('active');
+            console.log("Active nav item set to:", activeNavItem); // Debugging line
         }
     }
 }

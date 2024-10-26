@@ -6,20 +6,12 @@
     <title>P2P Forex Exchange</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Link to external CSS file -->
+    <!-- Link to external CSS files -->
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/exchange.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Forex AI</h2>
-        <div class="nav-item"><i class="fas fa-chart-line"></i><span>Dashboard</span></div>
-        <div class="nav-item"><i class="fas fa-exchange-alt"></i><span>Currency Exchange</span></div>
-        <div class="nav-item active"><i class="fas fa-users"></i><span>P2P Exchange</span></div>
-        <div class="nav-item"><i class="fas fa-wallet"></i><span>E-Money Conversion</span></div>
-        <div class="nav-item"><i class="fas fa-fingerprint"></i><span>Biometric Verification</span></div>
-        <div class="nav-item"><i class="fas fa-history"></i><span>Transaction History</span></div>
-        <div class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></div>
-    </div>
+    <script src="scripts/sidebar.js" defer></script> <!-- Load sidebar script -->
 
     <div class="main-content">
         <h1>P2P Currency Exchange</h1>
@@ -61,7 +53,7 @@
 
             <div class="create-offer">
                 <h2>Create New Offer</h2>
-                <form id="newOfferForm">
+                <form id="newOfferForm" onsubmit="createOffer(event)">
                     <div class="form-group">
                         <label for="offerType">I Want to:</label>
                         <select id="offerType" required>
@@ -109,8 +101,9 @@
     </div>
 
     <!-- Link to separated JavaScript files -->
-    <script src="scripts/offers.js"></script>
-    <script src="scripts/modal.js"></script>
-    <script src="scripts/form.js"></script>
+    <script src="scripts/offers.js" defer></script>
+    <script src="scripts/modal.js" defer></script>
+    <script src="scripts/form.js" defer></script>
+    
 </body>
 </html>

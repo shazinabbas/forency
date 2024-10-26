@@ -59,12 +59,12 @@ body {
     color: inherit; /* Use inherited color from parent */
 }
 
+/* Active link styles */
 .nav-item:hover,
 .nav-item.active {
-    background-color: rgba(74, 144, 226, 0.1);
-    color: var(--primary-color);
+    background-color: rgba(74, 144, 226, 0.1); /* Light background on hover and active */
+    color: var(--primary-color); /* Change text color for active item */
 }
-
 
 .nav-item i {
     font-size: 18px;
@@ -254,4 +254,3 @@ h1, h2 {
     background-color: var(--secondary-color);
     transform: scale(1.1);
 }
-

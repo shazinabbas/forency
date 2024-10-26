@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Exchange & Route Finder (Demo)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #4b5563;
+            --background: #f3f4f6;
+            --card: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1, h2 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.375rem;
+            display: none;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 600px;
+            margin: 4rem auto;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--secondary);
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: #1f2937;
+        }
+
+        .route-card {
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .route-card:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+        }
+
+        .route-number {
+            width: 2.5rem;
+            height: 2.5rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .route-details {
+            flex-grow: 1;
+        }
+
+        .route-path {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .route-rate {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .profit-indicator {
+            font-size: 0.9rem;
+            color: #10b981;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Currency Converter Demo</h1>
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" min="0" step="0.01" placeholder="Enter amount" value="1000">
+            </div>
+            <div class="form-group">
+                <label for="fromCurrency">From Currency</label>
+                <select id="fromCurrency"></select>
+            </div>
+            <div class="form-group">
+                <label for="toCurrency">To Currency</label>
+                <select id="toCurrency"></select>
+            </div>
+            <div class="button-group">
+                <button onclick="convertCurrency()">Convert</button>
+                <button onclick="showRoutes()">Generate Routes</button>
+            </div>
+            <div id="conversionResult" class="result"></div>
+        </div>
+
+        <div id="routesModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Best Currency Routes</h2>
+                <div id="routesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dummy exchange rates (fixed values for demo)
+        const dummyRates = {
+            'USD': { 'EUR': 0.85, 'GBP': 0.73, 'JPY': 110.0, 'INR': 74.5 },
+            'EUR': { 'USD': 1.18, 'GBP': 0.86, 'JPY': 129.5, 'INR': 87.8 },
+            'GBP': { 'USD': 1.37, 'EUR': 1.16, 'JPY': 150.2, 'INR': 102.1 },
+            'JPY': { 'USD': 0.0091, 'EUR': 0.0077, 'GBP': 0.0067, 'INR': 0.68 },
+            'INR': { 'USD': 0.013, 'EUR': 0.011, 'GBP': 0.0098, 'JPY': 1.47 }
+        };
+
+        const currencies = Object.keys(dummyRates);
+
+        // Initialize currency dropdowns
+        function initializeCurrencyDropdowns() {
+            const fromSelect = document.getElementById('fromCurrency');
+            const toSelect = document.getElementById('toCurrency');
+           
+            currencies.forEach(currency => {
+                fromSelect.add(new Option(currency, currency));
+                toSelect.add(new Option(currency, currency));
+            });
+           
+            fromSelect.value = 'INR';
+            toSelect.value = 'USD';
+        }
+
+        // Direct conversion
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const resultDiv = document.getElementById('conversionResult');
+
+            const rate = dummyRates[fromCurrency][toCurrency];
+            const convertedAmount = (amount * rate).toFixed(2);
+           
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <p>${amount.toFixed(2)} ${fromCurrency} = ${convertedAmount} ${toCurrency}</p>
+                <p>Exchange Rate: 1 ${fromCurrency} = ${rate} ${toCurrency}</p>
+            `;
+        }
+
+        // Generate dummy routes
+        function generateDummyRoutes(fromCurrency, toCurrency) {
+            const directRate = dummyRates[fromCurrency][toCurrency];
+           
+            // Generate three routes with slightly different rates
+            return [
+                {
+                    path: [fromCurrency, toCurrency],
+                    rate: directRate,
+                    profit: "Direct conversion"
+                },
+                {
+                    path: [fromCurrency, "EUR", toCurrency],
+                    rate: directRate * 1.02, // Slightly better than direct
+                    profit: "+2.0% better than direct"
+                },
+                {
+                    path: [fromCurrency, "GBP", toCurrency],
+                    rate: directRate * 0.99, // Slightly worse than direct
+                    profit: "-1.0% compared to direct"
+                }
+            ];
+        }
+
+        // Show routes modal
+        function showRoutes() {
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+           
+            const modal = document.getElementById('routesModal');
+            const routesList = document.getElementById('routesList');
+           
+            const routes = generateDummyRoutes(fromCurrency, toCurrency);
+           
+            routesList.innerHTML = '';
+            routes.forEach((route, index) => {
+                const convertedAmount = (amount * route.rate).toFixed(2);
+                const routeCard = document.createElement('div');
+                routeCard.className = 'route-card';
+                routeCard.innerHTML = `
+                    <div class="route-number">${index + 1}</div>
+                    <div class="route-details">
+                        <div class="route-path">${route.path.join(' → ')}</div>
+                        <div class="route-rate">${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}</div>
+                        <div class="profit-indicator">${route.profit}</div>
+                    </div>
+                `;
+                routesList.appendChild(routeCard);
+            });
+           
+            modal.style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('routesModal').style.display = 'none';
+        }
+
+        // Initialize on load
+        window.onload = initializeCurrencyDropdowns;
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('routesModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
